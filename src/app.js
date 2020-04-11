@@ -10,7 +10,9 @@ app.use(cors());
 
 const repositories = [];
 
-app.get("/repositories", (request, response) => {});
+app.get("/repositories", (request, response) => {
+  return response.json(repositories);
+});
 
 app.post("/repositories", (request, response) => {
   const { title, url, techs } = request.body;
@@ -29,11 +31,43 @@ app.post("/repositories", (request, response) => {
 });
 
 app.put("/repositories/:id", (request, response) => {
-  // TODO
+  const { id } = request.params;
+  const { title, url, techs } = request.body;
+
+  const repositoryIndex = repositories.findIndex(
+    (repository) => repository.id === id
+  );
+
+  if (repositoryIndex < 0) {
+    return response.status(404).json({ error: "ID does not exist" });
+  }
+
+  const repository = {
+    id,
+    title,
+    url,
+    techs,
+  };
+
+  repositories[repositoryIndex] = repository;
+
+  return response.status(200).json(repository);
 });
 
 app.delete("/repositories/:id", (request, response) => {
-  // TODO
+  const { id } = request.params;
+
+  const repositoryIndex = repositories.findIndex(
+    (repository) => repository.id === id
+  );
+
+  if (repositoryIndex < 0) {
+    return response.status(404).json({ error: "ID does not exist" });
+  }
+
+  repositories.splice(repositoryIndex, 1);
+
+  return response.status(204).send();
 });
 
 app.post("/repositories/:id/like", (request, response) => {
