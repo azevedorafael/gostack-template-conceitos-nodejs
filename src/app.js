@@ -32,14 +32,14 @@ app.post("/repositories", (request, response) => {
 
 app.put("/repositories/:id", (request, response) => {
   const { id } = request.params;
-  const { title, url, techs, likes } = request.body;
+  const { title, url, techs } = request.body;
 
   const repositoryIndex = repositories.findIndex(
     (repository) => repository.id === id
   );
 
   if (repositoryIndex < 0) {
-    return response.status(404).json({ error: "ID does not exist" });
+    return response.status(400).json({ error: "ID does not exist" });
   }
 
   const repository = {
@@ -47,7 +47,7 @@ app.put("/repositories/:id", (request, response) => {
     title,
     url,
     techs,
-    likes,
+    likes: repositories[repositoryIndex].likes,
   };
 
   repositories[repositoryIndex] = repository;
@@ -63,7 +63,7 @@ app.delete("/repositories/:id", (request, response) => {
   );
 
   if (repositoryIndex < 0) {
-    return response.status(404).json({ error: "ID does not exist" });
+    return response.status(400).json({ error: "ID does not exist" });
   }
 
   repositories.splice(repositoryIndex, 1);
@@ -79,7 +79,7 @@ app.post("/repositories/:id/like", (request, response) => {
   );
 
   if (repositoryIndex < 0) {
-    return response.status(404).json({ error: "ID does not exist" });
+    return response.status(400).json({ error: "ID does not exist" });
   }
 
   const { id: newId, title, url, techs, likes } = repositories[repositoryIndex];
